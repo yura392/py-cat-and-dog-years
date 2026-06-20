@@ -17,16 +17,22 @@ from app.main import get_human_age
         (-5, -10, [0, 0]),  # negative values
     ],
 )
-def test_examples(cat_age: int, dog_age: int, expected: list[int]) -> None:
+def test_examples(
+    cat_age: int,
+    dog_age: int,
+    expected: list[int],
+) -> None:
     assert get_human_age(cat_age, dog_age) == expected
 
 
 def test_monotonic_increase() -> None:
     """Ensure human age never decreases as pet age increases."""
     for cat_age in range(1, 50):
-        prev, curr = get_human_age(cat_age - 1, 0)[0], get_human_age(cat_age, 0)[0]
+        prev = get_human_age(cat_age - 1, 0)[0]
+        curr = get_human_age(cat_age, 0)[0]
         assert curr >= prev
 
     for dog_age in range(1, 50):
-        prev, curr = get_human_age(0, dog_age - 1)[1], get_human_age(0, dog_age)[1]
+        prev = get_human_age(0, dog_age - 1)[1]
+        curr = get_human_age(0, dog_age)[1]
         assert curr >= prev
