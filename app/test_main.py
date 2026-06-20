@@ -5,49 +5,28 @@ from app.main import get_human_age
 @pytest.mark.parametrize(
     "cat_age,dog_age,expected",
     [
-        (0, 0, [0, 0]),          # both zero
-        (14, 14, [0, 0]),        # just below first threshold
-        (15, 15, [1, 1]),        # exactly first threshold
-        (23, 23, [1, 1]),        # just below second threshold
-        (24, 24, [2, 2]),        # exactly second threshold
-        (27, 27, [2, 2]),        # within plateau
-        (28, 28, [3, 2]),        # cat crosses next boundary
-        (100, 100, [21, 17]),    # large values
-    ]
+        (0, 0, [0, 0]),
+        (14, 14, [0, 0]),
+        (15, 15, [1, 1]),
+        (23, 23, [1, 1]),
+        (24, 24, [2, 2]),
+        (27, 27, [2, 2]),
+        (28, 28, [3, 2]),
+        (29, 29, [3, 3]),
+        (100, 100, [21, 17]),
+        (-5, -10, [0, 0]),  # negative values
+    ],
 )
 def test_examples(cat_age: int, dog_age: int, expected: list[int]) -> None:
     assert get_human_age(cat_age, dog_age) == expected
 
 
-def test_cat_boundaries() -> None:
-    # 15 cat years → 1 human
-    assert get_human_age(15, 0)[0] == 1
-    # 24 cat years → 2 human
-    assert get_human_age(24, 0)[0] == 2
-    # 28 cat years → 3 human
-    assert get_human_age(28, 0)[0] == 3
-
-
-def test_dog_boundaries() -> None:
-    # 15 dog years → 1 human
-    assert get_human_age(0, 15)[1] == 1
-    # 24 dog years → 2 human
-    assert get_human_age(0, 24)[1] == 2
-    # 29 dog years → 3 human
-    assert get_human_age(0, 29)[1] == 3
-
-
-@pytest.mark.parametrize(
-    "cat_age,dog_age",
-    [
-        (16, 20),
-        (30, 35),
-        (50, 60),
-    ]
-)
-def test_monotonic_increase(cat_age: int, dog_age: int) -> None:
+def test_monotonic_increase() -> None:
     """Ensure human age never decreases as pet age increases."""
-    prev = get_human_age(cat_age - 1, dog_age - 1)
-    curr = get_human_age(cat_age, dog_age)
-    assert curr[0] >= prev[0]
-    assert curr[1] >= prev[1]
+    for cat_age in range(1, 50):
+        prev, curr = get_human_age(cat_age - 1, 0)[0], get_human_age(cat_age, 0)[0]
+        assert curr >= prev
+
+    for dog_age in range(1, 50):
+        prev, curr = get_human_age(0, dog_age - 1)[1], get_human_age(0, dog_age)[1]
+        assert curr >= prev
