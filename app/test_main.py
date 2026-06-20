@@ -1,5 +1,6 @@
 import pytest
-from app.main import get_human_age   # adjust import if needed
+from app.main import get_human_age
+
 
 @pytest.mark.parametrize(
     "cat_age,dog_age,expected",
@@ -14,11 +15,11 @@ from app.main import get_human_age   # adjust import if needed
         (100, 100, [21, 17]),    # large values
     ]
 )
-def test_examples(cat_age, dog_age, expected):
+def test_examples(cat_age: int, dog_age: int, expected: list[int]) -> None:
     assert get_human_age(cat_age, dog_age) == expected
 
 
-def test_cat_boundaries():
+def test_cat_boundaries() -> None:
     # 15 cat years → 1 human
     assert get_human_age(15, 0)[0] == 1
     # 24 cat years → 2 human
@@ -27,7 +28,7 @@ def test_cat_boundaries():
     assert get_human_age(28, 0)[0] == 3
 
 
-def test_dog_boundaries():
+def test_dog_boundaries() -> None:
     # 15 dog years → 1 human
     assert get_human_age(0, 15)[1] == 1
     # 24 dog years → 2 human
@@ -44,7 +45,7 @@ def test_dog_boundaries():
         (50, 60),
     ]
 )
-def test_monotonic_increase(cat_age, dog_age):
+def test_monotonic_increase(cat_age: int, dog_age: int) -> None:
     """Ensure human age never decreases as pet age increases."""
     prev = get_human_age(cat_age - 1, dog_age - 1)
     curr = get_human_age(cat_age, dog_age)
